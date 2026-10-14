@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Контейнеры — дислокация</title>
+<meta name="description" content="Сопоставление рабочего журнала и отчётов слежения разных перевозчиков">
+<style>
+:root{--navy:#152b45;--blue:#1769aa;--teal:#0f766e;--bg:#f3f6fa;--text:#172033;--muted:#65748b;--line:#dce4ed;--white:#fff;--amber:#a16207;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,Segoe UI,Arial,sans-serif}
+header{background:var(--navy);color:#fff;padding:24px max(20px,calc((100vw - 1440px)/2));display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.brand{display:flex;gap:13px;align-items:center}.logo{width:44px;height:44px;border-radius:12px;background:#d7f1ff;color:var(--navy);display:grid;place-items:center;font-size:24px}.brand h1{font-size:22px;margin:0}.brand p{margin:3px 0 0;color:#c5d4e5;font-size:13px}
+header .privacy{font-size:12px;color:#d6e2ef;border:1px solid #52677f;border-radius:999px;padding:8px 12px}
+main{max-width:1440px;margin:auto;padding:24px 20px 50px}.intro{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:18px}.intro h2{margin:0 0 5px;font-size:24px}.intro p{margin:0;color:var(--muted)}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.panel,.stat{background:var(--white);border:1px solid var(--line);border-radius:14px}.panel{padding:18px}.panel h3{margin:0 0 7px;font-size:16px}.panel p{margin:0;color:var(--muted);font-size:13px}.stepnum{display:inline-grid;place-items:center;width:25px;height:25px;background:#e5f1ff;color:#175ca0;border-radius:8px;font-weight:700;margin-right:7px}
+.uploads{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}.uploadbox{border:1px dashed #a9bacd;background:#fbfdff;border-radius:12px;padding:16px}.uploadbox label{font-weight:700;display:block;margin-bottom:8px}.uploadbox small{display:block;color:var(--muted);margin-top:8px}.uploadbox input{display:block;width:100%;max-width:100%;font-size:13px}.uploadbox .tag{font-size:11px;color:#175ca0;background:#e5f1ff;border-radius:5px;padding:3px 6px;margin-left:6px}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}.btn{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer;font-size:14px}.btn.primary{background:var(--blue);color:white}.btn.secondary{background:#e8edf4;color:#26374d}.btn:disabled{opacity:.45;cursor:not-allowed}.status{color:var(--muted);font-size:13px}.notice{display:none;padding:12px 14px;border-radius:10px;margin:0 0 16px;font-size:13px}.notice.show{display:block}.notice.info{background:#eaf4ff;color:#174a7c}.notice.error{background:#fff0ef;color:#8e1d16}.notice.success{background:#e9f8f1;color:#176448}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.stat{padding:16px}.stat .label{font-size:12px;color:var(--muted)}.stat .value{font-size:28px;font-weight:750;margin-top:5px}.stat .hint{font-size:12px;color:var(--muted);margin-top:2px}
+.results{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}.resultshead{padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line)}.resultshead h3{margin:0;font-size:17px}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters input,.filters select{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:10px;font:inherit;min-width:170px}.filters input{min-width:240px}.tablewrap{overflow:auto;max-height:68vh}table{border-collapse:separate;border-spacing:0;width:100%;min-width:1250px;font-size:13px}th{position:sticky;top:0;background:#edf2f7;color:#36465b;text-align:left;font-weight:700;z-index:1}th,td{padding:11px 12px;border-bottom:1px solid #e8edf3;vertical-align:top}tbody tr:hover{background:#f8fbff}.container{font-weight:800;white-space:nowrap;color:#164f83}.client{font-weight:700;min-width:140px}.muted{color:var(--muted)}.pill{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700;white-space:nowrap}.pill.ok{background:#dcfce7;color:#166534}.pill.miss{background:#fff1d6;color:#8a5100}.pill.dup{background:#fee2e2;color:#991b1b}.empty{padding:42px 20px;text-align:center;color:var(--muted)}.empty strong{display:block;color:#34445a;font-size:16px;margin-bottom:6px}
+footer{max-width:1440px;margin:auto;padding:0 20px 28px;color:var(--muted);font-size:12px}
+@media(max-width:800px){main{padding:16px 12px 35px}.steps,.uploads{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.intro h2{font-size:21px}.stat .value{font-size:24px}header{padding:18px 14px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">▦</div><div><h1>Контейнеры — дислокация</h1><p>Единый журнал движения контейнеров разных перевозчиков</p></div></div><div class="privacy">🔒 Доступ для команды</div></header>
+<main>
+ <div class="intro"><div><h2>Рабочая панель контейнеров</h2><p>Загрузите рабочий журнал и до пяти отчётов слежения от любых перевозчиков. Данные объединятся по номеру контейнера.</p></div></div>
+ <div class="steps">
+  <section class="panel"><h3><span class="stepnum">1</span>Журнал Excel</h3><p>Ваш рабочий файл. Приложение прочитает все листы, где есть колонка «контейнер».</p></section>
+  <section class="panel"><h3><span class="stepnum">2</span>Отчёты слежения</h3><p>Добавьте файлы от FESCO или другого перевозчика/экспедитора. Можно выбрать до пяти файлов.</p></section>
+  <section class="panel"><h3><span class="stepnum">3</span>Поиск и выгрузка</h3><p>Найдите контейнер или клиента, отфильтруйте статусы и скачайте результат в CSV.</p></section>
+ </div>
+ <section class="panel" style="margin-bottom:18px">
+  <h3>Общий доступ для коллег</h3><p style="margin-bottom:12px">Войдите под корпоративной учётной записью, чтобы сохранять последний результат в общей базе и открывать его с других компьютеров.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+   <input id="email" type="email" placeholder="Рабочая почта" autocomplete="username" style="padding:10px;border:1px solid #cbd5e1;border-radius:8px;min-width:220px">
+   <input id="password" type="password" placeholder="Пароль" autocomplete="current-password" style="padding:10px;border:1px solid #cbd5e1;border-radius:8px;min-width:180px">
+   <button class="btn primary" id="login">Войти</button><button class="btn secondary" id="logout" hidden>Выйти</button>
+   <button class="btn secondary" id="loadShared" disabled>Загрузить общий результат</button>
+  </div><small id="authStatus" style="display:block;color:var(--muted);margin-top:9px">Для общего хранения сначала настройте Supabase по инструкции в README.</small>
+ </section>
+ <div class="uploads">
+  <div class="uploadbox"><label for="journal">Рабочий журнал <span class="tag">1 файл</span></label><input id="journal" type="file" accept=".xlsx,.xls,.xlsm"><small id="journalName">Файл журнала не выбран</small></div>
+  <div class="uploadbox"><label for="tracking">Отчёты слежения <span class="tag">до 5 файлов</span></label><input id="tracking" type="file" accept=".xlsx,.xls,.xlsm" multiple><small id="trackingName">Отчёты не выбраны</small></div>
+ </div>
+ <div class="actions"><button class="btn primary" id="process">Сопоставить файлы</button><button class="btn secondary" id="export" disabled>Экспортировать CSV</button><button class="btn secondary" id="saveShared" disabled>Сохранить для коллег</button><button class="btn secondary" id="reset">Сбросить</button><span class="status" id="status">Выберите файлы для начала работы.</span></div>
+ <div id="notice" class="notice"></div>
+ <div class="stats">
+  <div class="stat"><div class="label">Строк в журнале</div><div class="value" id="total">—</div><div class="hint">контейнерные записи</div></div>
+  <div class="stat"><div class="label">Есть дислокация</div><div class="value" id="tracked">—</div><div class="hint">найдены в отчётах</div></div>
+  <div class="stat"><div class="label">Нет в отчётах</div><div class="value" id="missing">—</div><div class="hint">проверьте файлы слежения</div></div>
+  <div class="stat"><div class="label">Контейнеров в отчётах</div><div class="value" id="reportCount">—</div><div class="hint">уникальные номера</div></div>
+ </div>
+ <section class="results">
+  <div class="resultshead"><h3>Список контейнеров <span class="muted" id="shown"></span></h3><div class="filters"><input id="search" type="search" placeholder="Поиск: контейнер, клиент, станция…"><select id="filter"><option value="all">Все статусы</option><option value="tracked">Есть дислокация</option><option value="missing">Нет в отчётах</option></select></div></div>
+  <div id="tablearea" class="empty"><strong>Пока нет данных</strong>Выберите Excel-файлы выше и нажмите «Сопоставить файлы».</div>
+ </section>
+</main>
+<footer>Сайт может работать через GitHub Pages. При настройке общего хранилища файлы и результат сохраняются в закрытом хранилище Supabase, доступном только вошедшим коллегам. Результат CSV открывается в Excel.</footer>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+let rows=[],allRows=[],trackingCount=0,lastJournalFile=null,lastTrackingFiles=[];
+const norm=s=>String(s??'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' ');
+const cleanContainer=v=>String(v??'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const dateText=v=>{
+ if(v==null||v==='')return '';
+ if(v instanceof Date&&!isNaN(v))return v.toLocaleDateString('ru-RU');
+ if(typeof v==='number'&&v>20000&&v<80000){const d=XLSX.SSF.parse_date_code(v);if(d)return [String(d.d).padStart(2,'0'),String(d.m).padStart(2,'0'),d.y].join('.')}
+ return String(v).trim();
+};
+function showNotice(msg,type='info'){const n=$('notice');n.textContent=msg;n.className='notice show '+type}
+function hideNotice(){$('notice').className='notice'}
+function setStatus(s){$('status').textContent=s}
+function findHeaderRow(matrix, matcher, limit=12){for(let i=0;i<Math.min(matrix.length,limit);i++){const vals=(matrix[i]||[]).map(norm);if(vals.some(v=>matcher(v)))return i}return -1}
+function colIndex(headers, candidates){return headers.findIndex(h=>candidates.some(c=>norm(h)===norm(c)||norm(h).includes(norm(c))))}
+function cell(row,idx){return idx>=0?row[idx]??'':''}
+function readJournal(wb){
+ const result=[];
+ for(const name of wb.SheetNames){
+  const matrix=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,defval:'',raw:false});
+  const hr=findHeaderRow(matrix,h=>h==='контейнер'||h==='номер контейнера');
+  if(hr<0)continue;
+  const headers=matrix[hr]||[];
+  const ci=colIndex(headers,['контейнер','номер контейнера']);
+  if(ci<0)continue;
+  const ix={
+   client:colIndex(headers,['клиент, город','клиент','наименование клиента']),
+   receiver:colIndex(headers,['получатель']),
+   manager:colIndex(headers,['менеджер']),
+   port:colIndex(headers,['порт погрузки']),
+   country:colIndex(headers,['страна']),
+   vessel:colIndex(headers,['судно']),
+   size:colIndex(headers,['20/40','размер']),
+   bill:colIndex(headers,['коносамент']),
+   goods:colIndex(headers,['товар'])
+  };
+  for(let r=hr+1;r<matrix.length;r++){
+   const row=matrix[r]||[],cn=cleanContainer(cell(row,ci));
+   if(!/^[A-Z]{4}\d{7}$/.test(cn))continue;
+   result.push({container:cn,client:String(cell(row,ix.client)||cell(row,ix.receiver)||'').trim(),receiver:String(cell(row,ix.receiver)||'').trim(),manager:String(cell(row,ix.manager)||'').trim(),port:String(cell(row,ix.port)||'').trim(),country:String(cell(row,ix.country)||'').trim(),vessel:String(cell(row,ix.vessel)||'').trim(),size:String(cell(row,ix.size)||'').trim(),bill:String(cell(row,ix.bill)||'').trim(),goods:String(cell(row,ix.goods)||'').trim(),sheet:name,tracking:null});
+  }
+ }
+ return result;
+}
+function readTracking(wb,filename){
+ const result=[];
+ for(const name of wb.SheetNames){
+  const matrix=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,defval:'',raw:false});
+  const hr=findHeaderRow(matrix,h=>h.includes('номер контейнера'));
+  if(hr<0)continue;
+  const head1=matrix[hr]||[],head2=matrix[hr+1]||[];
+  const combined=head1.map((v,i)=>[v,head2[i]].filter(Boolean).join(' '));
+  const find=(terms)=>{let i=combined.findIndex(h=>terms.some(t=>norm(h).includes(norm(t))));if(i<0)i=head1.findIndex(h=>terms.some(t=>norm(h).includes(norm(t))));return i};
+  const ix={container:find(['номер контейнера']),size:find(['размер']),wagon:find(['номер вагона']),station:find(['станция']),rail:find(['наименование жд дороги']),date:find(['дата последней операции']),operation:find(['название операции']),destination:find(['жд станция назначения']),distance:find(['остаток расстояния'])};
+  for(let r=hr+1;r<matrix.length;r++){
+   const row=matrix[r]||[],cn=cleanContainer(cell(row,ix.container));
+   if(!/^[A-Z]{4}\d{7}$/.test(cn))continue;
+   const item={container:cn,size:String(cell(row,ix.size)||'').trim(),wagon:String(cell(row,ix.wagon)||'').trim(),station:String(cell(row,ix.station)||'').trim(),rail:String(cell(row,ix.rail)||'').trim(),date:dateText(cell(row,ix.date)),operation:String(cell(row,ix.operation)||'').trim(),destination:String(cell(row,ix.destination)||'').trim(),distance:String(cell(row,ix.distance)||'').trim(),source:filename};
+   result.push(item);
+  }
+ }
+ return result;
+}
+function latest(a,b){
+ const da=Date.parse(a.date?.split('.').reverse().join('-')||''),db=Date.parse(b.date?.split('.').reverse().join('-')||'');
+ if(Number.isFinite(db)&&(!Number.isFinite(da)||db>da))return b;
+ if(Number.isFinite(da)&&(!Number.isFinite(db)||da>db))return a;
+ return b;
+}
+function mergeTracking(reports){
+ const map=new Map();
+ for(const t of reports){if(map.has(t.container))map.set(t.container,latest(map.get(t.container),t));else map.set(t.container,t)}
+ return map;
+}
+async function loadWorkbook(file){const buf=await file.arrayBuffer();return XLSX.read(buf,{type:'array',cellDates:true})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){
+ const q=norm($('search').value),f=$('filter').value;
+ rows=allRows.filter(r=>{
+  const t=r.tracking,tracked=!!t;
+  if(f==='tracked'&&!tracked)return false;if(f==='missing'&&tracked)return false;
+  const hay=[r.container,r.client,r.receiver,r.manager,r.port,r.country,r.vessel,r.bill,r.goods,r.sheet,t?.station,t?.rail,t?.operation,t?.destination,t?.source].map(norm).join(' ');
+  return !q||hay.includes(q);
+ });
+ $('shown').textContent=`(${rows.length})`;
+ if(!rows.length){$('tablearea').className='empty';$('tablearea').innerHTML='<strong>Ничего не найдено</strong>Измените поисковый запрос или фильтр.';return}
+ $('tablearea').className='tablewrap';
+ const body=rows.map(r=>{const t=r.tracking;return `<tr>
+ <td class="container">${esc(r.container)}</td><td class="client">${esc(r.client||r.receiver||'—')}</td><td>${esc(r.receiver||'—')}</td><td>${esc(r.manager||'—')}</td><td>${esc(r.port||'—')}</td><td>${esc(r.country||'—')}</td><td>${esc(r.vessel||'—')}</td><td>${esc(r.size||t?.size||'—')}</td><td>${t?`<span class="pill ok">Найдена</span>`:`<span class="pill miss">Нет в отчёте</span>`}</td><td>${esc(t?.station||'—')}</td><td>${esc(t?.rail||'—')}</td><td>${esc(t?.date||'—')}</td><td>${esc(t?.operation||'—')}</td><td>${esc(t?.destination||'—')}</td><td>${esc(t?.distance||'—')}</td><td>${esc(t?.source||'—')}</td><td>${esc(r.sheet)}</td></tr>`}).join('');
+ $('tablearea').innerHTML=`<table><thead><tr><th>Контейнер</th><th>Клиент</th><th>Получатель</th><th>Менеджер</th><th>Порт погрузки</th><th>Страна</th><th>Судно</th><th>Размер</th><th>Слежение</th><th>Последняя станция</th><th>ЖД дорога</th><th>Дата операции</th><th>Последняя операция</th><th>Станция назначения</th><th>Остаток расстояния</th><th>Отчёт</th><th>Лист журнала</th></tr></thead><tbody>${body}</tbody></table>`;
+}
+$('journal').addEventListener('change',e=>{$('journalName').textContent=e.target.files[0]?.name||'Файл журнала не выбран'});
+$('tracking').addEventListener('change',e=>{$('trackingName').textContent=e.target.files.length?Array.from(e.target.files).map(f=>f.name).join(', '):'Отчёты не выбраны'});
+$('process').addEventListener('click',async()=>{
+ const jf=$('journal').files[0],tf=Array.from($('tracking').files);
+ if(!jf){showNotice('Сначала выберите рабочий журнал Excel.','error');return}
+ if(!tf.length){showNotice('Выберите хотя бы один отчёт FESCO.','error');return}
+ if(tf.length>5){showNotice('Можно загрузить не более пяти отчётов FESCO за один раз.','error');return}
+ if(typeof XLSX==='undefined'){showNotice('Не удалось загрузить библиотеку чтения Excel. Проверьте подключение к интернету и обновите страницу.','error');return}
+ lastJournalFile=jf;lastTrackingFiles=tf;$('process').disabled=true;setStatus('Читаю Excel-файлы…');hideNotice();
+ try{
+  const jw=await loadWorkbook(jf),jr=readJournal(jw);
+  if(!jr.length)throw new Error('Не удалось найти строки контейнеров в журнале. Проверьте, что в одном из листов есть колонка «контейнер» и номера формата ABCD1234567.');
+  let tr=[];for(const file of tf){const wb=await loadWorkbook(file);tr=tr.concat(readTracking(wb,file.name))}
+  if(!tr.length)throw new Error('В отчётах не найдены контейнеры. Ожидается колонка «Номер контейнера» и строки с данными ниже заголовков.');
+  const map=mergeTracking(tr);allRows=jr.map(r=>({...r,tracking:map.get(r.container)||null}));
+  trackingCount=map.size;
+  $('total').textContent=jr.length.toLocaleString('ru-RU');$('tracked').textContent=allRows.filter(r=>r.tracking).length.toLocaleString('ru-RU');$('missing').textContent=allRows.filter(r=>!r.tracking).length.toLocaleString('ru-RU');$('reportCount').textContent=map.size.toLocaleString('ru-RU');
+  $('export').disabled=false;render();setStatus(`Обработано: ${tf.length} отчётов слежения.`);showNotice(`Готово: прочитано ${jr.length} записей журнала и ${tr.length} строк слежения (${map.size} уникальных контейнеров в отчётах). Если один контейнер встречается в нескольких отчётах, показана запись с более поздней датой операции, когда дата доступна.`,'success'); if(window.persistDataset) await window.persistDataset(jf,tf);
+ }catch(err){showNotice(err.message||String(err),'error');setStatus('Не удалось обработать файлы.')}
+ finally{$('process').disabled=false}
+});
+$('search').addEventListener('input',render);$('filter').addEventListener('change',render);
+$('export').addEventListener('click',()=>{
+ if(!rows.length)return;
+ const headers=['Контейнер','Клиент','Получатель','Менеджер','Порт погрузки','Страна','Судно','Размер','Статус слежения','Последняя станция','ЖД дорога','Дата операции','Последняя операция','Станция назначения','Остаток расстояния','Файл отчёта','Лист журнала','Коносамент','Товар'];
+ const data=rows.map(r=>{const t=r.tracking;return [r.container,r.client,r.receiver,r.manager,r.port,r.country,r.vessel,r.size||t?.size||'',t?'Найдена':'Нет в отчёте',t?.station||'',t?.rail||'',t?.date||'',t?.operation||'',t?.destination||'',t?.distance||'',t?.source||'',r.sheet,r.bill,r.goods]});
+ const csv='\ufeff'+[headers,...data].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""').replace(/\r?\n/g,' ')+'"').join(';')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='fesco-container-tracker.csv';a.click();URL.revokeObjectURL(url);
+});
+$('reset').addEventListener('click',()=>{allRows=[];rows=[];$('journal').value='';$('tracking').value='';$('journalName').textContent='Файл журнала не выбран';$('trackingName').textContent='Отчёты не выбраны';['total','tracked','missing','reportCount'].forEach(id=>$(id).textContent='—');$('search').value='';$('filter').value='all';$('export').disabled=true;$('tablearea').className='empty';$('tablearea').innerHTML='<strong>Пока нет данных</strong>Выберите Excel-файлы выше и нажмите «Сопоставить файлы».';$('shown').textContent='';setStatus('Выберите файлы для начала работы.');hideNotice()});
+</script>
+<script>
+(function(){
+ let client=null,session=null;
+ const cfg=window.APP_CONFIG||{};
+ const authStatus=document.getElementById('authStatus');
+ const setAuthStatus=t=>{authStatus.textContent=t};
+ const configured=cfg.SUPABASE_URL&&cfg.SUPABASE_ANON_KEY&&!String(cfg.SUPABASE_URL).includes('YOUR_PROJECT');
+ if(!configured||!window.supabase){setAuthStatus('Общее хранение ещё не настроено. Заполните config.js и выполните SQL из папки проекта. Пока сайт работает только в текущем браузере.');return;}
+ client=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
+ const loginBtn=document.getElementById('login'),logoutBtn=document.getElementById('logout'),loadBtn=document.getElementById('loadShared'),saveBtn=document.getElementById('saveShared');
+ function updateSession(s){session=s;const ok=!!s;loginBtn.hidden=ok;logoutBtn.hidden=!ok;loadBtn.disabled=!ok;saveBtn.disabled=!ok||!allRows.length;document.getElementById('email').disabled=ok;document.getElementById('password').disabled=ok;setAuthStatus(ok?'Вход выполнен: '+(s.user.email||'пользователь')+'. Общий результат доступен команде.':'Войдите под рабочей учётной записью.');}
+ client.auth.getSession().then(({data})=>updateSession(data.session));
+ client.auth.onAuthStateChange((_event,s)=>updateSession(s));
+ loginBtn.addEventListener('click',async()=>{const email=document.getElementById('email').value.trim(),password=document.getElementById('password').value;if(!email||!password){setAuthStatus('Введите рабочую почту и пароль.');return;}loginBtn.disabled=true;const {error}=await client.auth.signInWithPassword({email,password});loginBtn.disabled=false;if(error)setAuthStatus('Ошибка входа: '+error.message);});
+ logoutBtn.addEventListener('click',async()=>{const {error}=await client.auth.signOut();if(error)setAuthStatus('Не удалось выйти: '+error.message);});
+ async function uploadSource(file,path){const {error}=await client.storage.from('container-source-files').upload(path,file,{upsert:true,contentType:file.type||'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});if(error)throw error;}
+ window.persistDataset=async function(journalFile,trackingFiles){
+  if(!client||!session){setAuthStatus('Результат рассчитан только в этом браузере. Войдите, чтобы сохранить его для коллег.');return;}
+  setAuthStatus('Сохраняю исходные файлы и общий результат…');saveBtn.disabled=true;
+  try{
+   const stamp=new Date().toISOString().replace(/[:.]/g,'-'),folder=journalFile?(stamp+'_'+session.user.id):('shared-result_'+stamp);
+   if(journalFile){await uploadSource(journalFile,folder+'/journal_'+journalFile.name.replace(/[^\w.\-А-Яа-я]/g,'_'));for(let i=0;i<trackingFiles.length;i++)await uploadSource(trackingFiles[i],folder+'/report'+(i+1)+'_'+trackingFiles[i].name.replace(/[^\w.\-А-Яа-я]/g,'_'));}
+   const payload=allRows.map(r=>({container:r.container,client:r.client,receiver:r.receiver,manager:r.manager,port:r.port,country:r.country,vessel:r.vessel,size:r.size,bill:r.bill,goods:r.goods,sheet:r.sheet,tracking:r.tracking}));
+   const {error}=await client.from('tracker_snapshots').insert({uploaded_by:session.user.id,journal_name:journalFile?.name||'Сохранённый общий результат',report_names:(trackingFiles||[]).map(f=>f.name),source_folder:folder,records:payload,counts:{total:payload.length,tracked:payload.filter(r=>r.tracking).length,missing:payload.filter(r=>!r.tracking).length}});
+   if(error)throw error;
+   setAuthStatus('Сохранено для коллег. Исходные Excel и результат хранятся в общем закрытом хранилище.');showNotice('Общий результат сохранён. Коллеги могут войти на сайт и нажать «Загрузить общий результат».','success');
+  }catch(e){setAuthStatus('Ошибка общего сохранения: '+e.message);showNotice('Не удалось сохранить общий результат. Проверьте SQL-политики и настройки Supabase: '+e.message,'error');}
+  finally{saveBtn.disabled=!session||!allRows.length;}
+ };
+ saveBtn.addEventListener('click',()=>window.persistDataset(lastJournalFile,lastTrackingFiles));
+ loadBtn.addEventListener('click',async()=>{
+  loadBtn.disabled=true;setAuthStatus('Загружаю последний общий результат…');
+  try{
+   const {data,error}=await client.from('tracker_snapshots').select('records,created_at,journal_name,report_names,counts').order('created_at',{ascending:false}).limit(1).maybeSingle();
+   if(error)throw error;if(!data){setAuthStatus('В общей базе пока нет сохранённых результатов. Загрузите файлы и сохраните результат.');return;}
+   allRows=(data.records||[]).map(r=>({...r,tracking:r.tracking||null}));
+   $('total').textContent=(data.counts?.total??allRows.length).toLocaleString('ru-RU');$('tracked').textContent=(data.counts?.tracked??allRows.filter(r=>r.tracking).length).toLocaleString('ru-RU');$('missing').textContent=(data.counts?.missing??allRows.filter(r=>!r.tracking).length).toLocaleString('ru-RU');$('reportCount').textContent='—';$('export').disabled=false;render();setStatus('Загружен общий результат от '+new Date(data.created_at).toLocaleString('ru-RU'));setAuthStatus('Загружены данные из общего хранилища. Журнал: '+data.journal_name+'. Отчёты: '+(data.report_names||[]).join(', '));saveBtn.disabled=false;
+  }catch(e){setAuthStatus('Ошибка загрузки: '+e.message);}finally{loadBtn.disabled=!session;}
+ });
+})();
+</script>
+</body>
+</html>
